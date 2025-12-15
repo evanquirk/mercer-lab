@@ -11,12 +11,6 @@ export async function loader({ context }: Route.LoaderArgs) {
 
   const publications = await getPublications(env);
 
-  // Debug: Log the first publication to see the data structure
-  if (publications.length > 0) {
-    console.log("First publication:", JSON.stringify(publications[0], null, 2));
-    console.log("Photo field:", publications[0].fields.photo);
-  }
-
   // Sort by year, newest first
   const sortedPublications = [...publications].sort(
     (a, b) => b.fields.year - a.fields.year

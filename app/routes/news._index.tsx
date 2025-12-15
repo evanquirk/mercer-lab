@@ -36,17 +36,25 @@ export default function NewsIndex({ loaderData }: Route.ComponentProps) {
       />
 
       <Section background="white">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {newsPosts.map((post) => (
-            <NewsCard
-              key={post.sys.id}
-              title={post.fields.title}
-              slug={post.fields.slug}
-              date={post.fields.date}
-              excerpt={post.fields.excerpt}
-            />
-          ))}
-        </div>
+        {newsPosts.length > 0 ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {newsPosts.map((post) => (
+              <NewsCard
+                key={post.sys.id}
+                title={post.fields.title}
+                slug={post.fields.slug}
+                date={post.fields.date}
+                excerpt={post.fields.excerpt}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              No news articles available at the moment. Check back soon for updates!
+            </p>
+          </div>
+        )}
       </Section>
     </>
   );
