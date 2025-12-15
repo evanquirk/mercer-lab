@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /* Custom color palette - Mercer Lab */
+  --color-navy-50: #e6ebf2;
+  --color-navy-100: #ccd7e5;
+  --color-navy-200: #99afcb;
+  --color-navy-300: #6687b1;
+  --color-navy-400: #335f97;
+  --color-navy-500: #003366;
+  --color-navy-600: #002952;
+  --color-navy-700: #001f3d;
+  --color-navy-800: #001429;
+  --color-navy-900: #000a14;
+
+  --color-gold-50: #faf6ed;
+  --color-gold-100: #f5eddb;
+  --color-gold-200: #ebdbb7;
+  --color-gold-300: #e1c993;
+  --color-gold-400: #d7b76f;
+  --color-gold-500: #C4A35A;
+  --color-gold-600: #9d8248;
+  --color-gold-700: #766236;
+  --color-gold-800: #4e4124;
+  --color-gold-900: #272112;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  @apply bg-white text-gray-900 antialiased;
+}
+
+/* Remove dark mode for this academic site */

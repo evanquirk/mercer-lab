@@ -1,0 +1,42 @@
+{
+  "name": "mercer-lab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "react-router build",
+    "dev": "react-router dev",
+    "start": "wrangler pages dev ./build/client",
+    "deploy": "npm run build && wrangler pages deploy ./build/client",
+    "typecheck": "react-router typegen && tsc",
+    "preview": "npm run build && wrangler pages dev ./build/client",
+    "import-publications": "tsx scripts/import-publications.ts"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20251121.0",
+    "@contentful/rich-text-plain-text-renderer": "^17.1.6",
+    "@contentful/rich-text-react-renderer": "^16.1.6",
+    "@contentful/rich-text-types": "^17.2.5",
+    "@react-router/node": "^7.9.2",
+    "@react-router/serve": "^7.9.2",
+    "contentful": "^11.9.0",
+    "contentful-management": "^11.66.0",
+    "dotenv": "^17.2.3",
+    "isbot": "^5.1.31",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router": "^7.9.2",
+    "tsx": "^4.21.0",
+    "wrangler": "^4.50.0"
+  },
+  "devDependencies": {
+    "@react-router/dev": "^7.9.2",
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^22.19.1",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7",
+    "vite-tsconfig-paths": "^5.1.4"
+  }
+}

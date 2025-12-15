@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /Users/evanquirk/Documents/LemonCork/01\\ Projects/Mercer\\ Lab:*)",
+      "Bash(cd /Users/evanquirk/Documents/LemonCork/01\\ Projects/Mercer\\ Lab && npm run typecheck:*)",
+      "Bash(npm install:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
