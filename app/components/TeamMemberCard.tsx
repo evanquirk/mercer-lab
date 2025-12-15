@@ -1,3 +1,5 @@
+import { parseLinks } from "~/lib/linkParser";
+
 interface TeamMemberCardProps {
   name: string;
   role: string;
@@ -17,6 +19,8 @@ export function TeamMemberCard({
   links,
   variant = "default",
 }: TeamMemberCardProps) {
+  const parsedLinks = links ? parseLinks(links) : [];
+
   if (variant === "featured") {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -64,10 +68,10 @@ export function TeamMemberCard({
                   {email}
                 </a>
               )}
-              {links?.map((link, index) => (
+              {parsedLinks.map((link, index) => (
                 <a
                   key={index}
-                  href={link}
+                  href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-sm text-navy-500 hover:text-navy-600"
@@ -85,7 +89,7 @@ export function TeamMemberCard({
                       d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                     />
                   </svg>
-                  Link
+                  {link.displayName}
                 </a>
               ))}
             </div>

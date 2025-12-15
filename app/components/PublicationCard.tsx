@@ -26,17 +26,12 @@ export function PublicationCard({
   const formattedAuthors = authors.join(", ");
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
-  // Debug logging
-  console.log(`Publication "${title}" - Photos:`, photos, "ImageUrl:", imageUrl);
-
   // Use photos array if available, otherwise fall back to single imageUrl
   const displayPhotos = photos && photos.length > 0
     ? photos
     : imageUrl
     ? [{ url: imageUrl, title }]
     : [];
-
-  console.log(`Publication "${title}" - Display photos:`, displayPhotos);
 
   const hasPhotos = displayPhotos.length > 0;
   const hasMultiplePhotos = displayPhotos.length > 1;
