@@ -135,6 +135,38 @@ export interface LayoutSettingsSkeleton extends EntrySkeletonType {
 
 export type LayoutSettings = Entry<LayoutSettingsSkeleton, undefined, string>;
 
+// Application Step (for Join Us page)
+export interface ApplicationStepFields {
+  stepNumber: number;
+  title: string;
+  description: RichTextDocument; // Rich Text for formatted descriptions with links
+  order?: number;
+}
+
+export interface ApplicationStepSkeleton extends EntrySkeletonType {
+  contentTypeId: "applicationStep";
+  fields: ApplicationStepFields;
+}
+
+export type ApplicationStep = Entry<ApplicationStepSkeleton, undefined, string>;
+
+// Job Position (for Join Us page)
+export interface JobPositionFields {
+  title: string;
+  positionType: string; // e.g., "Postdoc", "Graduate", "Staff", "Undergraduate", "Visiting Scholar"
+  description: string;
+  requirements: string[]; // Array of requirement strings
+  isActive: boolean;
+  order?: number;
+}
+
+export interface JobPositionSkeleton extends EntrySkeletonType {
+  contentTypeId: "jobPosition";
+  fields: JobPositionFields;
+}
+
+export type JobPosition = Entry<JobPositionSkeleton, undefined, string>;
+
 // Helper type to extract fields from Entry
 export type ExtractFields<T> = T extends Entry<infer S, undefined, string>
   ? S extends EntrySkeletonType
