@@ -7,6 +7,8 @@ import type {
   NewsPostSkeleton,
   PageSkeleton,
   LayoutSettingsSkeleton,
+  ApplicationStepSkeleton,
+  JobPositionSkeleton,
   SiteSettings,
   LabMember,
   Publication,
@@ -14,6 +16,8 @@ import type {
   NewsPost,
   Page,
   LayoutSettings,
+  ApplicationStep,
+  JobPosition,
 } from "~/types/contentful";
 
 export interface Env {
@@ -169,4 +173,26 @@ export async function getLayoutSettings(env: Env): Promise<LayoutSettings | unde
     limit: 1,
   } as ContentfulQuery) as EntryCollection<LayoutSettingsSkeleton, undefined, string>;
   return response.items[0];
+}
+
+// Application Steps (for Join Us page)
+export async function getApplicationSteps(env: Env): Promise<ApplicationStep[]> {
+  const client = getClient(env);
+  const response = await client.getEntries({
+    content_type: "applicationStep",
+    order: ["fields.order"],
+    include: 2, // Include any linked content
+  } as ContentfulQuery) as EntryCollection<ApplicationStepSkeleton, undefined, string>;
+  return response.items;
+}
+
+// Job Positions (for Join Us page)
+export async function getJobPositions(env: Env): Promise<JobPosition[]> {
+  const client = getClient(env);
+  const response = await client.getEntries({
+    content_type: "jobPosition",
+    "fields.isActive": true,
+    order: ["fields.order"],
+  } as ContentfulQuery) as EntryCollection<JobPositionSkeleton, undefined, string>;
+  return response.items;
 }
