@@ -1,45 +1,20 @@
 import type { Route } from "./+types/join-us";
 import { Hero, Section } from "~/components";
+import { getJobPositions } from "~/lib/contentful.server";
 
-// Sample data - replace with Contentful data when connected
-const openPositions = [
-  {
-    title: "Postdoctoral Fellow - Structural Biology",
-    type: "Postdoc",
-    description:
-      "We are seeking a highly motivated postdoctoral fellow to join our structural biology team. The successful candidate will use cryo-EM and other advanced techniques to determine structures of prion protein aggregates.",
-    requirements: [
-      "Ph.D. in structural biology, biochemistry, or related field",
-      "Experience with cryo-EM data collection and processing",
-      "Strong publication record",
-      "Excellent communication skills",
-    ],
-  },
-  {
-    title: "Graduate Student Positions",
-    type: "Graduate",
-    description:
-      "We are recruiting graduate students for Fall 2024 through the Neuroscience and Biochemistry graduate programs. Students will have the opportunity to work on cutting-edge projects in prion biology.",
-    requirements: [
-      "Bachelor's degree in biology, chemistry, or related field",
-      "Strong academic record",
-      "Research experience preferred",
-      "Interest in neurodegenerative diseases",
-    ],
-  },
-  {
-    title: "Research Technician",
-    type: "Staff",
-    description:
-      "We are looking for a research technician to support our laboratory operations. This position involves maintaining cell cultures, preparing reagents, and assisting with experiments.",
-    requirements: [
-      "Bachelor's degree in biology or related field",
-      "1-2 years of laboratory experience",
-      "Experience with cell culture and molecular biology techniques",
-      "Strong organizational skills",
-    ],
-  },
-];
+export async function loader({ context }: Route.LoaderArgs) {
+  // Access env from context (Cloudflare) or process.env (dev mode)
+  const env = (context as any)?.cloudflare?.env || {
+    CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
+    CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN,
+  };
+
+  const jobPositions = await getJobPositions(env);
+
+  return {
+    jobPositions,
+  };
+}
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -52,7 +27,9 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function JoinUs() {
+export default function JoinUs({ loaderData }: Route.ComponentProps) {
+  const { jobPositions } = loaderData;
+
   return (
     <>
       <Hero
@@ -147,43 +124,64 @@ export default function JoinUs() {
         title="Open Positions"
         description="Explore our current job openings and find the right opportunity for you."
       >
-        <div className="space-y-6">
-          {openPositions.map((position, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl border border-gray-200 p-6 md:p-8"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-                <div>
-                  <span className="inline-block px-3 py-1 text-xs font-medium bg-gold-100 text-gold-700 rounded-full mb-2">
-                    {position.type}
-                  </span>
-                  <h3 className="text-xl font-semibold text-navy-500">
-                    {position.title}
-                  </h3>
+        {jobPositions.length > 0 ? (
+          <div className="space-y-6">
+            {jobPositions.map((position) => (
+              <div
+                key={position.sys.id}
+                className="bg-white rounded-xl border border-gray-200 p-6 md:p-8"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+                  <div>
+                    <span className="inline-block px-3 py-1 text-xs font-medium bg-gold-100 text-gold-700 rounded-full mb-2">
+                      {position.fields.positionType}
+                    </span>
+                    <h3 className="text-xl font-semibold text-navy-500">
+                      {position.fields.title}
+                    </h3>
+                  </div>
                 </div>
+                <p className="text-gray-600 mb-4">{position.fields.description}</p>
+                <div>
+                  <h4 className="font-medium text-navy-500 mb-2">Requirements:</h4>
+                  <ul className="space-y-1">
+                    {position.fields.requirements.map((req, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                        <span className="w-1.5 h-1.5 bg-gold-500 rounded-full mt-2 flex-shrink-0" />
+                        {req}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <a
+                  href="/contact"
+                  className="mt-6 inline-flex items-center px-4 py-2 bg-navy-500 text-white font-medium rounded-lg hover:bg-navy-600 transition-colors"
+                >
+                  Apply Now
+                </a>
               </div>
-              <p className="text-gray-600 mb-4">{position.description}</p>
-              <div>
-                <h4 className="font-medium text-navy-500 mb-2">Requirements:</h4>
-                <ul className="space-y-1">
-                  {position.requirements.map((req, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="w-1.5 h-1.5 bg-gold-500 rounded-full mt-2 flex-shrink-0" />
-                      {req}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
+            <div className="max-w-2xl mx-auto px-4">
+              <h3 className="text-xl font-semibold text-navy-500 mb-3">
+                No Current Openings
+              </h3>
+              <p className="text-gray-600 mb-6">
+                We don't have any open positions at the moment, but we're always interested
+                in hearing from talented researchers. Check back later for new opportunities,
+                or feel free to reach out with a general inquiry.
+              </p>
               <a
                 href="/contact"
-                className="mt-6 inline-flex items-center px-4 py-2 bg-navy-500 text-white font-medium rounded-lg hover:bg-navy-600 transition-colors"
+                className="inline-flex items-center px-6 py-3 bg-navy-500 text-white font-medium rounded-lg hover:bg-navy-600 transition-colors"
               >
-                Apply Now
+                Contact Us
               </a>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
       </Section>
 
       {/* How to Apply */}
@@ -228,12 +226,12 @@ export default function JoinUs() {
                   Submit Your Application
                 </h3>
                 <p className="text-gray-600">
-                  Send your application materials to Dr. Sarah Mercer at{" "}
+                  Send your application materials to Dr. Robert CC Mercer at{" "}
                   <a
-                    href="mailto:smercer@university.edu"
-                    className="text-navy-500 hover:text-navy-600"
+                    href="mailto:rmercer@midwestern.edu"
+                    className="text-navy-500 hover:text-navy-600 underline"
                   >
-                    smercer@university.edu
+                    rmercer@midwestern.edu
                   </a>
                   . Please include the position title in the subject line.
                 </p>
