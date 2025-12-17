@@ -121,44 +121,48 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </div>
       </Section>
 
-      {/* Featured Research */}
-      <Section
-        background="gray"
-        subtitle="Research Focus"
-        title="Current Research Projects"
-        description="Explore our ongoing research initiatives aimed at understanding and combating prion diseases."
-      >
-        <div className="grid md:grid-cols-3 gap-6">
-          {featuredResearch.map((project) => (
-            <ResearchProjectCard
-              key={project.sys.id}
-              title={project.fields.title}
-              description={project.fields.description}
-              status={project.fields.status}
-            />
-          ))}
-        </div>
-      </Section>
+      {/* Featured Research - Only show if there are projects */}
+      {featuredResearch.length > 0 && (
+        <Section
+          background="gray"
+          subtitle="Research Focus"
+          title="Current Research Projects"
+          description="Explore our ongoing research initiatives aimed at understanding and combating prion diseases."
+        >
+          <div className="grid md:grid-cols-3 gap-6">
+            {featuredResearch.map((project) => (
+              <ResearchProjectCard
+                key={project.sys.id}
+                title={project.fields.title}
+                description={project.fields.description}
+                status={project.fields.status}
+              />
+            ))}
+          </div>
+        </Section>
+      )}
 
-      {/* Recent News */}
-      <Section
-        background="white"
-        subtitle="Latest Updates"
-        title="News & Announcements"
-        description="Stay up to date with the latest developments from the Mercer Lab."
-      >
-        <div className="grid md:grid-cols-3 gap-6">
-          {recentNews.map((post) => (
-            <NewsCard
-              key={post.sys.id}
-              title={post.fields.title}
-              slug={post.fields.slug}
-              date={post.fields.date}
-              excerpt={post.fields.excerpt}
-            />
-          ))}
-        </div>
-      </Section>
+      {/* Recent News - Only show if there are news posts */}
+      {recentNews.length > 0 && (
+        <Section
+          background="white"
+          subtitle="Latest Updates"
+          title="News & Announcements"
+          description="Stay up to date with the latest developments from the Mercer Lab."
+        >
+          <div className="grid md:grid-cols-3 gap-6">
+            {recentNews.map((post) => (
+              <NewsCard
+                key={post.sys.id}
+                title={post.fields.title}
+                slug={post.fields.slug}
+                date={post.fields.date}
+                excerpt={post.fields.excerpt}
+              />
+            ))}
+          </div>
+        </Section>
+      )}
 
       {/* Lab Info */}
       <Section background="navy">
