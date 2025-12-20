@@ -1,22 +1,8 @@
-import type { Route } from "./+types/join-us";
+import { useState, useEffect } from "react";
 import { Hero, Section } from "~/components";
-import { getJobPositions } from "~/lib/contentful.server";
+import { getJobPositions } from "~/lib/contentful";
 
-export async function loader({ context }: Route.LoaderArgs) {
-  // Access env from context (Cloudflare) or process.env (dev mode)
-  const env = (context as any)?.cloudflare?.env || {
-    CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
-    CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN,
-  };
-
-  const jobPositions = await getJobPositions(env);
-
-  return {
-    jobPositions,
-  };
-}
-
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "Join Us | Mercer Lab" },
     {
@@ -27,8 +13,19 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function JoinUs({ loaderData }: Route.ComponentProps) {
-  const { jobPositions } = loaderData;
+export default function JoinUs() {
+  const [jobPositions, setJobPositions] = useState<any[]>([]);
+
+  useEffect(() => {
+    const env = {
+      CONTENTFUL_SPACE_ID: import.meta.env.VITE_CONTENTFUL_SPACE_ID,
+      CONTENTFUL_ACCESS_TOKEN: import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN,
+    };
+
+    getJobPositions(env).then((positions) => {
+      setJobPositions(positions);
+    });
+  }, []);
 
   return (
     <>

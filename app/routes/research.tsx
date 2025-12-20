@@ -1,25 +1,9 @@
-import type { Route } from "./+types/research";
+import { useState, useEffect } from "react";
 import { Hero, Section, ResearchProjectCard } from "~/components";
-import { getResearchProjects } from "~/lib/contentful.server";
+import { getResearchProjects } from "~/lib/contentful";
 import { documentToPlainTextString } from "@contentful/rich-text-plain-text-renderer";
 
-export async function loader({ context }: Route.LoaderArgs) {
-  const env = (context as any)?.cloudflare?.env || {
-    CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
-    CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN,
-  };
-
-  const researchProjects = await getResearchProjects(env);
-
-  // Sort by order field
-  const sortedProjects = [...researchProjects].sort(
-    (a, b) => (a.fields.order || 999) - (b.fields.order || 999)
-  );
-
-  return { researchProjects: sortedProjects };
-}
-
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "Research | Mercer Lab" },
     {
@@ -30,8 +14,22 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Research({ loaderData }: Route.ComponentProps) {
-  const { researchProjects } = loaderData;
+export default function Research() {
+  const [researchProjects, setResearchProjects] = useState<any[]>([]);
+
+  useEffect(() => {
+    const env = {
+      CONTENTFUL_SPACE_ID: import.meta.env.VITE_CONTENTFUL_SPACE_ID,
+      CONTENTFUL_ACCESS_TOKEN: import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN,
+    };
+
+    getResearchProjects(env).then((projects) => {
+      const sortedProjects = [...projects].sort(
+        (a, b) => (a.fields.order || 999) - (b.fields.order || 999)
+      );
+      setResearchProjects(sortedProjects);
+    });
+  }, []);
   const activeProjects = researchProjects.filter(
     (p) => p.fields.status === "active"
   );

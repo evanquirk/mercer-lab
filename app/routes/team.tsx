@@ -1,38 +1,9 @@
-import type { Route } from "./+types/team";
+import { useState, useEffect } from "react";
 import { Hero, Section, TeamMemberCard } from "~/components";
-import { getCurrentMembers, getAlumni } from "~/lib/contentful.server";
+import { getCurrentMembers, getAlumni } from "~/lib/contentful";
 import { documentToPlainTextString } from "@contentful/rich-text-plain-text-renderer";
 
-export async function loader({ context }: Route.LoaderArgs) {
-  const env = (context as any)?.cloudflare?.env || {
-    CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
-    CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN,
-  };
-
-  const [currentMembers, alumni] = await Promise.all([
-    getCurrentMembers(env),
-    getAlumni(env),
-  ]);
-
-  // Sort by order field if available
-  const sortedMembers = [...currentMembers].sort(
-    (a, b) => (a.fields.order || 999) - (b.fields.order || 999)
-  );
-
-  // Find featured member (order = 1)
-  const featuredMember = sortedMembers.find((member) => member.fields.order === 1);
-
-  // Filter out featured member from other members
-  const otherMembers = sortedMembers.filter((member) => member.fields.order !== 1);
-
-  return {
-    principalInvestigator: featuredMember,
-    currentMembers: otherMembers,
-    alumni: [...alumni].sort((a, b) => (a.fields.order || 999) - (b.fields.order || 999)),
-  };
-}
-
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "Team | Mercer Lab" },
     {
@@ -43,8 +14,32 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Team({ loaderData }: Route.ComponentProps) {
-  const { principalInvestigator, currentMembers, alumni } = loaderData;
+export default function Team() {
+  const [principalInvestigator, setPrincipalInvestigator] = useState<any>(null);
+  const [currentMembers, setCurrentMembers] = useState<any[]>([]);
+  const [alumni, setAlumni] = useState<any[]>([]);
+
+  useEffect(() => {
+    const env = {
+      CONTENTFUL_SPACE_ID: import.meta.env.VITE_CONTENTFUL_SPACE_ID,
+      CONTENTFUL_ACCESS_TOKEN: import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN,
+    };
+
+    Promise.all([
+      getCurrentMembers(env),
+      getAlumni(env),
+    ]).then(([members, alumniData]) => {
+      const sortedMembers = [...members].sort(
+        (a, b) => (a.fields.order || 999) - (b.fields.order || 999)
+      );
+      const featuredMember = sortedMembers.find((member) => member.fields.order === 1);
+      const otherMembers = sortedMembers.filter((member) => member.fields.order !== 1);
+
+      setPrincipalInvestigator(featuredMember);
+      setCurrentMembers(otherMembers);
+      setAlumni([...alumniData].sort((a, b) => (a.fields.order || 999) - (b.fields.order || 999)));
+    });
+  }, []);
 
   return (
     <>

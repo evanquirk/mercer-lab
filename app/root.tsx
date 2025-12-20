@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -5,38 +6,14 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
 } from "react-router";
 
-import type { Route } from "./+types/root";
 import { Navigation } from "~/components/Navigation";
 import { Footer } from "~/components/Footer";
-import { getLayoutSettings } from "~/lib/contentful.server";
+import { getLayoutSettings } from "~/lib/contentful";
 import "./app.css";
 
-export async function loader({ context }: Route.LoaderArgs) {
-  const env = (context as any)?.cloudflare?.env || {
-    CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
-    CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN,
-  };
-
-  const layoutSettings = await getLayoutSettings(env);
-
-  // Default to all true if no layout settings found
-  const navigation = layoutSettings?.fields || {
-    home: true,
-    research: true,
-    team: true,
-    publications: true,
-    news: true,
-    joinUs: true,
-    contact: true,
-  };
-
-  return { navigation };
-}
-
-export const links: Route.LinksFunction = () => [
+export const links = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -50,15 +27,28 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  // Try to get loader data, but provide defaults if not available
-  let navigation;
-  try {
-    const data = useLoaderData() as { navigation: any } | undefined;
-    navigation = data?.navigation;
-  } catch {
-    // If loader data isn't available (like in error boundary), use defaults
-    navigation = undefined;
-  }
+  const [navigation, setNavigation] = useState({
+    home: true,
+    research: true,
+    team: true,
+    publications: true,
+    news: true,
+    joinUs: true,
+    contact: true,
+  });
+
+  useEffect(() => {
+    const env = {
+      CONTENTFUL_SPACE_ID: import.meta.env.VITE_CONTENTFUL_SPACE_ID,
+      CONTENTFUL_ACCESS_TOKEN: import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN,
+    };
+
+    getLayoutSettings(env).then((layoutSettings) => {
+      if (layoutSettings?.fields) {
+        setNavigation(layoutSettings.fields);
+      }
+    });
+  }, []);
 
   return (
     <html lang="en">
@@ -83,7 +73,7 @@ export default function App() {
   return <Outlet />;
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+export function ErrorBoundary({ error }: { error: unknown }) {
   let message = "Oops!";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;

@@ -1,42 +1,40 @@
-import { Link } from "react-router";
-import type { Route } from "./+types/news.$slug";
+import { useState, useEffect } from "react";
+import { Link, useParams } from "react-router";
 import { Section } from "~/components";
-import { getNewsPostBySlug } from "~/lib/contentful.server";
+import { getNewsPostBySlug } from "~/lib/contentful";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
 
-export async function loader({ params, context }: Route.LoaderArgs) {
-  const env = (context as any)?.cloudflare?.env || {
-    CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
-    CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN,
-  };
+export function meta() {
+  return [{ title: "News | Mercer Lab" }];
+}
 
-  const post = await getNewsPostBySlug(env, params.slug);
+export default function NewsPost() {
+  const { slug } = useParams();
+  const [post, setPost] = useState<any>(null)
+
+;
+
+  useEffect(() => {
+    if (!slug) return;
+
+    const env = {
+      CONTENTFUL_SPACE_ID: import.meta.env.VITE_CONTENTFUL_SPACE_ID,
+      CONTENTFUL_ACCESS_TOKEN: import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN,
+    };
+
+    getNewsPostBySlug(env, slug).then((fetchedPost) => {
+      setPost(fetchedPost);
+    });
+  }, [slug]);
 
   if (!post) {
-    throw new Response("Not Found", { status: 404 });
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-500">Loading...</div>
+      </div>
+    );
   }
-
-  return { post };
-}
-
-export function meta({ data }: Route.MetaArgs) {
-  if (!data?.post) {
-    return [{ title: "News | Mercer Lab" }];
-  }
-
-  const { post } = data;
-  return [
-    { title: `${post.fields.title} | Mercer Lab` },
-    {
-      name: "description",
-      content: post.fields.excerpt || "News from the Mercer Lab",
-    },
-  ];
-}
-
-export default function NewsPost({ loaderData }: Route.ComponentProps) {
-  const { post } = loaderData;
 
   const formattedDate = new Date(post.fields.date).toLocaleDateString("en-US", {
     year: "numeric",

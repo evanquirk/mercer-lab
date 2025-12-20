@@ -1,18 +1,8 @@
-import type { Route } from "./+types/news._index";
+import { useState, useEffect } from "react";
 import { Hero, Section, NewsCard } from "~/components";
-import { getNewsPosts } from "~/lib/contentful.server";
+import { getNewsPosts } from "~/lib/contentful";
 
-export async function loader({ context }: Route.LoaderArgs) {
-  const env = (context as any)?.cloudflare?.env || {
-    CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
-    CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN,
-  };
-
-  const newsPosts = await getNewsPosts(env);
-  return { newsPosts };
-}
-
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "News | Mercer Lab" },
     {
@@ -23,8 +13,19 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function NewsIndex({ loaderData }: Route.ComponentProps) {
-  const { newsPosts } = loaderData;
+export default function NewsIndex() {
+  const [newsPosts, setNewsPosts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const env = {
+      CONTENTFUL_SPACE_ID: import.meta.env.VITE_CONTENTFUL_SPACE_ID,
+      CONTENTFUL_ACCESS_TOKEN: import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN,
+    };
+
+    getNewsPosts(env).then((posts) => {
+      setNewsPosts(posts);
+    });
+  }, []);
 
   return (
     <>

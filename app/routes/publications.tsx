@@ -1,25 +1,8 @@
-import { useState } from "react";
-import type { Route } from "./+types/publications";
+import { useState, useEffect } from "react";
 import { Hero, Section, PublicationCard } from "~/components";
-import { getPublications } from "~/lib/contentful.server";
+import { getPublications } from "~/lib/contentful";
 
-export async function loader({ context }: Route.LoaderArgs) {
-  const env = (context as any)?.cloudflare?.env || {
-    CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
-    CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN,
-  };
-
-  const publications = await getPublications(env);
-
-  // Sort by year, newest first
-  const sortedPublications = [...publications].sort(
-    (a, b) => b.fields.year - a.fields.year
-  );
-
-  return { publications: sortedPublications };
-}
-
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "Publications | Mercer Lab" },
     {
@@ -30,10 +13,24 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Publications({ loaderData }: Route.ComponentProps) {
-  const { publications } = loaderData;
+export default function Publications() {
+  const [publications, setPublications] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
+
+  useEffect(() => {
+    const env = {
+      CONTENTFUL_SPACE_ID: import.meta.env.VITE_CONTENTFUL_SPACE_ID,
+      CONTENTFUL_ACCESS_TOKEN: import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN,
+    };
+
+    getPublications(env).then((pubs) => {
+      const sortedPublications = [...pubs].sort(
+        (a, b) => b.fields.year - a.fields.year
+      );
+      setPublications(sortedPublications);
+    });
+  }, []);
 
   const years = [...new Set(publications.map((p) => p.fields.year))].sort(
     (a, b) => b - a

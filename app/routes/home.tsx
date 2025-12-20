@@ -1,26 +1,8 @@
-import type { Route } from "./+types/home";
+import { useState, useEffect } from "react";
 import { Hero, Section, ResearchProjectCard, NewsCard } from "~/components";
-import { getActiveProjects, getRecentNews } from "~/lib/contentful.server";
+import { getActiveProjects, getRecentNews } from "~/lib/contentful";
 
-export async function loader({ context }: Route.LoaderArgs) {
-  // Access env from context (Cloudflare) or process.env (dev mode)
-  const env = (context as any)?.cloudflare?.env || {
-    CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
-    CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN,
-  };
-
-  const [featuredResearch, recentNews] = await Promise.all([
-    getActiveProjects(env),
-    getRecentNews(env, 3),
-  ]);
-
-  return {
-    featuredResearch: featuredResearch.slice(0, 3),
-    recentNews,
-  };
-}
-
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "Mercer Lab | Prion Research Laboratory" },
     {
@@ -31,8 +13,24 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Home({ loaderData }: Route.ComponentProps) {
-  const { featuredResearch, recentNews } = loaderData;
+export default function Home() {
+  const [featuredResearch, setFeaturedResearch] = useState<any[]>([]);
+  const [recentNews, setRecentNews] = useState<any[]>([]);
+
+  useEffect(() => {
+    const env = {
+      CONTENTFUL_SPACE_ID: import.meta.env.VITE_CONTENTFUL_SPACE_ID,
+      CONTENTFUL_ACCESS_TOKEN: import.meta.env.VITE_CONTENTFUL_ACCESS_TOKEN,
+    };
+
+    Promise.all([
+      getActiveProjects(env),
+      getRecentNews(env, 3),
+    ]).then(([projects, news]) => {
+      setFeaturedResearch(projects.slice(0, 3));
+      setRecentNews(news);
+    });
+  }, []);
 
   return (
     <>

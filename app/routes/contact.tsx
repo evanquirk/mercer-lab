@@ -1,68 +1,7 @@
-import { Form, useActionData, useNavigation } from "react-router";
-import type { Route } from "./+types/contact";
+import { useState } from "react";
 import { Hero, Section } from "~/components";
 
-export async function action({ request, context }: Route.ActionArgs) {
-  const formData = await request.formData();
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const subject = formData.get("subject") as string;
-  const message = formData.get("message") as string;
-
-  // Access env from context (Cloudflare) or process.env (dev mode)
-  const env = (context as any)?.cloudflare?.env || process.env;
-  const resendApiKey = env.RESEND_API_KEY;
-
-  if (!resendApiKey) {
-    return {
-      success: false,
-      error: "Email service is not configured. Please contact the administrator.",
-    };
-  }
-
-  try {
-    // Send email using Resend API
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${resendApiKey}`,
-      },
-      body: JSON.stringify({
-        from: "Mercer Lab Website <onboarding@resend.dev>", // Update this with your verified domain
-        to: ["evan_quirk@me.com"],
-        reply_to: email,
-        subject: `[Mercer Lab Contact Form] ${subject}`,
-        html: `
-          <h2>New Contact Form Submission</h2>
-          <p><strong>From:</strong> ${name} (${email})</p>
-          <p><strong>Subject:</strong> ${subject}</p>
-          <p><strong>Message:</strong></p>
-          <p>${message.replace(/\n/g, "<br>")}</p>
-        `,
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      console.error("Resend API error:", error);
-      return {
-        success: false,
-        error: "Failed to send message. Please try again or contact us directly via email.",
-      };
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error sending email:", error);
-    return {
-      success: false,
-      error: "An error occurred while sending your message. Please try again later.",
-    };
-  }
-}
-
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "Contact | Mercer Lab" },
     {
@@ -74,9 +13,43 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Contact() {
-  const actionData = useActionData<typeof action>();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({ success: false, error: "" });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setFormData({ success: false, error: "" });
+
+    const form = e.currentTarget;
+    const data = {
+      name: (form.elements.namedItem("name") as HTMLInputElement).value,
+      email: (form.elements.namedItem("email") as HTMLInputElement).value,
+      subject: (form.elements.namedItem("subject") as HTMLSelectElement).value,
+      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+    };
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      setFormData(result);
+      if (result.success) {
+        form.reset();
+      }
+    } catch (error) {
+      setFormData({
+        success: false,
+        error: "An error occurred. Please try again later.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -179,7 +152,7 @@ export default function Contact() {
               Send Us a Message
             </h2>
 
-            {actionData?.success ? (
+            {formData.success ? (
               <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
                 <svg
                   className="w-12 h-12 text-green-500 mx-auto mb-4"
@@ -204,12 +177,12 @@ export default function Contact() {
               </div>
             ) : (
               <>
-                {actionData?.error && (
+                {formData.error && (
                   <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-                    <p className="text-red-700">{actionData.error}</p>
+                    <p className="text-red-700">{formData.error}</p>
                   </div>
                 )}
-                <Form method="post" className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label
                       htmlFor="name"
@@ -287,7 +260,7 @@ export default function Contact() {
                   >
                     {isSubmitting ? "Sending..." : "Send Message"}
                   </button>
-                </Form>
+                </form>
               </>
             )}
           </div>
