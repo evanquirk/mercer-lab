@@ -45,7 +45,7 @@ export function Hero({
       }
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl">
+        <div className="max-w-5xl">
           {subtitle && (
             <p className="text-gold-400 font-medium text-sm uppercase tracking-wider mb-3">
               {subtitle}
@@ -55,27 +55,46 @@ export function Hero({
             {title}
           </h1>
           {description && (
-            <p className="text-lg md:text-xl text-navy-100 leading-relaxed mb-8">
-              {description}
-            </p>
+            <p
+              className="text-lg md:text-xl text-navy-100 leading-relaxed mb-8"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
           )}
           {(primaryAction || secondaryAction) && (
             <div className="flex flex-wrap gap-4">
               {primaryAction && (
-                <Link
-                  to={primaryAction.to}
-                  className="inline-flex items-center px-6 py-3 bg-gold-500 text-navy-900 font-semibold rounded-lg hover:bg-gold-400 transition-colors"
-                >
-                  {primaryAction.label}
-                </Link>
+                primaryAction.to.startsWith("mailto:") || primaryAction.to.startsWith("http") ? (
+                  <a
+                    href={primaryAction.to}
+                    className="inline-flex items-center px-6 py-3 bg-gold-500 text-navy-900 font-semibold rounded-lg hover:bg-gold-400 transition-colors"
+                  >
+                    {primaryAction.label}
+                  </a>
+                ) : (
+                  <Link
+                    to={primaryAction.to}
+                    className="inline-flex items-center px-6 py-3 bg-gold-500 text-navy-900 font-semibold rounded-lg hover:bg-gold-400 transition-colors"
+                  >
+                    {primaryAction.label}
+                  </Link>
+                )
               )}
               {secondaryAction && (
-                <Link
-                  to={secondaryAction.to}
-                  className="inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-navy-500 transition-colors"
-                >
-                  {secondaryAction.label}
-                </Link>
+                secondaryAction.to.startsWith("mailto:") || secondaryAction.to.startsWith("http") ? (
+                  <a
+                    href={secondaryAction.to}
+                    className="inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-navy-500 transition-colors"
+                  >
+                    {secondaryAction.label}
+                  </a>
+                ) : (
+                  <Link
+                    to={secondaryAction.to}
+                    className="inline-flex items-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-navy-500 transition-colors"
+                  >
+                    {secondaryAction.label}
+                  </Link>
+                )
               )}
             </div>
           )}

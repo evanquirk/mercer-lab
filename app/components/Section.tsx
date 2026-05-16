@@ -4,7 +4,7 @@ interface SectionProps {
   children: ReactNode;
   title?: string;
   subtitle?: string;
-  description?: string;
+  description?: ReactNode;
   background?: "white" | "gray" | "navy";
   className?: string;
 }

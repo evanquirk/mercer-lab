@@ -47,7 +47,7 @@ export default function Team() {
         size="medium"
         subtitle="Our People"
         title="Meet the Team"
-        description="Our diverse team of researchers brings together expertise in biochemistry, cell biology, structural biology, and computational science to tackle the challenges of prion diseases."
+        description=""
       />
 
       {/* Principal Investigator */}

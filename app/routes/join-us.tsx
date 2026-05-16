@@ -31,89 +31,10 @@ export default function JoinUs() {
     <>
       <Hero
         size="medium"
-        subtitle="Careers"
+        subtitle="Open Positions"
         title="Join Our Team"
-        description="We're always looking for talented and motivated individuals to join our research team. Explore current opportunities and learn how to apply."
+        description="We're always looking for talented and motivated individuals to join our team. Interested students should contact Dr. Mercer directly via email (<a href='mailto:rmerce@midwestern.edu' class='underline hover:text-white'>rmerce@midwestern.edu</a>) including a CV and cover letter."
       />
-
-      {/* Why Join Us */}
-      <Section background="white" subtitle="Why Mercer Lab?" title="What We Offer">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            {
-              title: "Cutting-Edge Research",
-              description:
-                "Work on impactful research using state-of-the-art techniques and equipment.",
-              icon: (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                />
-              ),
-            },
-            {
-              title: "Collaborative Environment",
-              description:
-                "Join a supportive team that values collaboration and open scientific discussion.",
-              icon: (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              ),
-            },
-            {
-              title: "Career Development",
-              description:
-                "Access mentoring, professional development, and networking opportunities.",
-              icon: (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                />
-              ),
-            },
-            {
-              title: "Great Location",
-              description:
-                "Our lab is located in a vibrant academic community with excellent resources.",
-              icon: (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              ),
-            },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className="bg-gray-50 rounded-xl p-6 border border-gray-100"
-            >
-              <div className="w-12 h-12 bg-navy-100 rounded-lg flex items-center justify-center mb-4">
-                <svg
-                  className="w-6 h-6 text-navy-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  {item.icon}
-                </svg>
-              </div>
-              <h3 className="font-semibold text-navy-500 mb-2">{item.title}</h3>
-              <p className="text-sm text-gray-600">{item.description}</p>
-            </div>
-          ))}
-        </div>
-      </Section>
-
       {/* Open Positions */}
       <Section
         background="gray"
@@ -181,77 +102,7 @@ export default function JoinUs() {
         )}
       </Section>
 
-      {/* How to Apply */}
-      <Section background="white" subtitle="Application Process" title="How to Apply">
-        <div className="max-w-3xl">
-          <div className="space-y-6">
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-navy-500 text-white rounded-full flex items-center justify-center font-semibold">
-                1
-              </div>
-              <div>
-                <h3 className="font-semibold text-navy-500 mb-1">
-                  Review Open Positions
-                </h3>
-                <p className="text-gray-600">
-                  Browse our current openings above and find a position that
-                  matches your interests and qualifications.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-navy-500 text-white rounded-full flex items-center justify-center font-semibold">
-                2
-              </div>
-              <div>
-                <h3 className="font-semibold text-navy-500 mb-1">
-                  Prepare Your Application
-                </h3>
-                <p className="text-gray-600">
-                  Gather your CV/resume, cover letter, and any other required
-                  materials. For postdoc positions, please include a research
-                  statement and contact information for three references.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-navy-500 text-white rounded-full flex items-center justify-center font-semibold">
-                3
-              </div>
-              <div>
-                <h3 className="font-semibold text-navy-500 mb-1">
-                  Submit Your Application
-                </h3>
-                <p className="text-gray-600">
-                  Send your application materials to Dr. Robert CC Mercer at{" "}
-                  <a
-                    href="mailto:rmercer@midwestern.edu"
-                    className="text-navy-500 hover:text-navy-600 underline"
-                  >
-                    rmercer@midwestern.edu
-                  </a>
-                  . Please include the position title in the subject line.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-navy-500 text-white rounded-full flex items-center justify-center font-semibold">
-                4
-              </div>
-              <div>
-                <h3 className="font-semibold text-navy-500 mb-1">
-                  Interview Process
-                </h3>
-                <p className="text-gray-600">
-                  Selected candidates will be contacted for interviews. The
-                  process typically includes virtual interviews followed by an
-                  on-site visit.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Section>
+  
 
       {/* Contact CTA */}
       <Section background="navy">

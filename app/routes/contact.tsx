@@ -123,7 +123,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-navy-500">Phone</h3>
-                  <p className="text-gray-600 mt-1">(623) 572-3200</p>
+                  <p className="text-gray-600 mt-1">(623) 537-6593</p>
                 </div>
               </div>
             </div>

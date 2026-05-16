@@ -56,7 +56,7 @@ export default function Publications() {
         size="medium"
         subtitle="Our Science"
         title="Publications"
-        description="Explore our peer-reviewed research contributions to the field of prion biology and neurodegenerative diseases."
+        description="Explore our contributions to the field of prion biology and beyond."
       />
 
       <Section background="white">

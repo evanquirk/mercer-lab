@@ -6,7 +6,6 @@ interface NavigationSettings {
   team?: boolean;
   publications?: boolean;
   news?: boolean;
-  joinUs?: boolean;
   contact?: boolean;
 }
 
@@ -23,57 +22,31 @@ const allQuickLinks = [
 ];
 
 export function Footer({ navigation }: FooterProps) {
-  // Filter links based on navigation settings
   const quickLinks = allQuickLinks.filter(
     (link) => navigation?.[link.key] !== false
   );
 
-  // Check if Join Us is enabled
-  const showJoinUs = navigation?.joinUs !== false;
-
   return (
     <footer className="bg-navy-500 text-white">
+      <div className="h-1 bg-gold-500" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Call to Action - Join our Team */}
-          {showJoinUs && (
-            <div className="md:col-span-3 flex flex-col items-center md:items-start text-center md:text-left">
-              <h2 className="text-2xl font-bold text-white mb-4">
-                Interested in Joining Our Team?
-              </h2>
-              <p className="text-navy-100 mb-6 max-w-2xl">
-                We're always looking for talented and motivated researchers to join
-                our lab. Check out our open positions and learn about opportunities
-                to contribute to groundbreaking prion research.
-              </p>
-              <Link
-                to="/join-us"
-                className="inline-flex items-center px-6 py-3 bg-gold-500 text-navy-900 font-semibold rounded-lg hover:bg-gold-400 transition-colors"
-              >
-                View Open Positions
-              </Link>
-            </div>
-          )}
-
-          {/* Quick Links */}
-          {quickLinks.length > 0 && (
-            <div>
-              <h3 className="font-semibold text-gold-400 mb-4">Quick Links</h3>
-              <ul className="space-y-2">
-                {quickLinks.map((link) => (
-                  <li key={link.to}>
-                    <Link
-                      to={link.to}
-                      className="text-navy-100 hover:text-white text-sm transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+        {quickLinks.length > 0 && (
+          <div className="mb-8">
+            <h3 className="font-semibold text-gold-400 mb-4">Quick Links</h3>
+            <ul className="flex flex-wrap gap-x-6 gap-y-2">
+              {quickLinks.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="text-navy-100 hover:text-white text-sm transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Bottom Bar */}
         <div className="mt-8 pt-8 border-t border-navy-400">
