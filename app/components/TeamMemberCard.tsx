@@ -8,6 +8,8 @@ interface TeamMemberCardProps {
   email?: string;
   links?: string[];
   variant?: "default" | "featured";
+  /** When provided, the card becomes clickable (used to open the full profile modal) */
+  onClick?: () => void;
 }
 
 export function TeamMemberCard({
@@ -18,6 +20,7 @@ export function TeamMemberCard({
   email,
   links,
   variant = "default",
+  onClick,
 }: TeamMemberCardProps) {
   const parsedLinks = links ? parseLinks(links) : [];
 
@@ -99,8 +102,8 @@ export function TeamMemberCard({
     );
   }
 
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+  const cardContent = (
+    <>
       {photoUrl ? (
         <img
           src={photoUrl}
@@ -120,15 +123,53 @@ export function TeamMemberCard({
         {bio && (
           <p className="text-sm text-gray-600 line-clamp-3 mb-3">{bio}</p>
         )}
-        {email && (
-          <a
-            href={`mailto:${email}`}
-            className="text-sm text-navy-500 hover:text-navy-600"
-          >
-            {email}
-          </a>
+        {onClick ? (
+          <span className="inline-flex items-center gap-1 text-sm font-medium text-navy-500 group-hover:text-navy-600">
+            Read more
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </span>
+        ) : (
+          email && (
+            <a
+              href={`mailto:${email}`}
+              className="text-sm text-navy-500 hover:text-navy-600"
+            >
+              {email}
+            </a>
+          )
         )}
       </div>
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={`View full profile for ${name}`}
+        className="group text-left w-full h-full flex flex-col bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 focus-visible:ring-offset-2"
+      >
+        {cardContent}
+      </button>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+      {cardContent}
     </div>
   );
 }
