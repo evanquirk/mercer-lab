@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Hero, Section, TeamMemberCard } from "~/components";
+import { Hero, Section, TeamMemberCard, TeamMemberModal } from "~/components";
 import { getCurrentMembers, getAlumni } from "~/lib/contentful";
 import { documentToPlainTextString } from "@contentful/rich-text-plain-text-renderer";
 
@@ -18,6 +18,7 @@ export default function Team() {
   const [principalInvestigator, setPrincipalInvestigator] = useState<any>(null);
   const [currentMembers, setCurrentMembers] = useState<any[]>([]);
   const [alumni, setAlumni] = useState<any[]>([]);
+  const [selectedMember, setSelectedMember] = useState<any>(null);
 
   useEffect(() => {
     const env = {
@@ -75,7 +76,7 @@ export default function Team() {
           background="gray"
           subtitle="Lab Members"
           title="Current Team"
-          description="Our talented team of scientists, postdocs, and students working together to advance prion research."
+          description="Our talented team of scientists and students working together to advance prion science."
         >
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {currentMembers.map((member) => (
@@ -90,6 +91,8 @@ export default function Team() {
                 }
                 photoUrl={member.fields.photo?.fields?.file?.url}
                 email={member.fields.email}
+                links={member.fields.links}
+                onClick={() => setSelectedMember(member)}
               />
             ))}
           </div>
@@ -136,6 +139,18 @@ export default function Team() {
           </a>
         </div>
       </Section>
+
+      {selectedMember && (
+        <TeamMemberModal
+          name={selectedMember.fields.name}
+          role={selectedMember.fields.role}
+          bio={selectedMember.fields.bio}
+          photoUrl={selectedMember.fields.photo?.fields?.file?.url}
+          email={selectedMember.fields.email}
+          links={selectedMember.fields.links}
+          onClose={() => setSelectedMember(null)}
+        />
+      )}
     </>
   );
 }
